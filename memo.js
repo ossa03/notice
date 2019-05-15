@@ -1,4 +1,4 @@
-/*
+/**
 ------- Tips --------
 
 ・ログ
@@ -9,6 +9,8 @@ SpreadsheetApp.getUi().alert(text);
 
 ・ある範囲（レンジ）を取得
 Sheetオブジェクト.getRange(行番号, 列番号, 行数, 列数)
+・値を取得
+getValue() & getValues()
 
 ・getA1NotationメソッドはRangeオブジェクトのアドレス((A3:c4)など)を取得するメソッド。
 Rangeオブジェクト.getA1Notation()

@@ -1,30 +1,36 @@
 // ------- sheetから結果取得 --------------------------------------------------
-var reports; //reportsを複数の関数で使えるようにグローバル変数として定義している。
+var reports;   //reportsを複数の関数で使えるようにグローバル変数として定義している。
 
-function notice() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet(); //spreadsheetfile取得
-  var sheet = ss.getActiveSheet(); //activeなsheet取得(第1sheet)
-  var all_data = ss.getDataRange().getValues(); //sheet内の全データ
-  var sheet_name = sheet.getName(); //sheetの名前
+function get_reports() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();  //spreadsheetfile取得
+  var sheet = ss.getActiveSheet();                 //activeなsheet取得(第1sheet)
+  var all_data = ss.getDataRange().getValues();    //sheet内の全データ
+  var sheet_name = sheet.getName();                //sheetの名前
 
   //  指定範囲のデータ取得getDataRange().getValues()
-  reports = []; //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
+  reports = [];   //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
   var lastrow = sheet.getLastRow();
   for (var i = 4; i < lastrow; i++) {
     var a = (sheet.getRange(i, 2).getValue());
     var b = (sheet.getRange(i, 3).getValue());
     var c = (sheet.getRange(i, 4).getValue());
-    var report = a + '  ' + b + '  ' + c + '分';
+    var report = a + '  ' + b + '  ' + c + '分' + '\n';
     // Logger.log(report);
     reports.push(report);
   }
-  Logger.log(reports);
+  //reportsは配列なので1つずつ改行でつなげて一つの文章に変換。
+  reports = reports.join('\n');
+  // Logger.log(reports);
   return reports;
-}
 
-function get_reports() {
-  for (var i = 0; i < reports.length; i++)
-    reports[i];
+  //  var lastrow = sheet.getLastRow();
+  //  for (var i = 4; i < lastrow; i++) {
+  //    var values = ss.getDataRange(i, 2, 1, 4).getValues(); //データのほしい範囲を指定している。
+  //    var text = "" // 空のtext変数を用意して以下の値を追加していく。 textの初期化という。
+  //    text += values[0][0] + '\n' + '  ' // 日付
+  //    text += values[0][1] + '\n' + '  ' // 名前
+  //    text += values[0][2] + '\n' + '分' // 休憩時間
+  //    Logger.log(text);
 }
 
 
@@ -107,7 +113,7 @@ function doPost(e) {
 /**
  * pushをしてみる
  */
-function test() {
-  push('notice');
+function notice() {
+  notice();
   push(reports);
 }
