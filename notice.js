@@ -1,11 +1,12 @@
 // ------- sheetから結果取得 --------------------------------------------------
-var reports;   //reportsを複数の関数で使えるようにグローバル変数として定義している。
+var ss = SpreadsheetApp.getActiveSpreadsheet();  //spreadsheetfile取得
+var sheet = ss.getActiveSheet();                 //activeなsheet取得(第1sheet)
+//var sheet = ss.getSheetByName('フォームの回答'); //sheet名でsheet取得(第1sheet)
+var sheet_name = sheet.getName();                //sheetの名前
+
 
 function get_reports() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();  //spreadsheetfile取得
-  var sheet = ss.getActiveSheet();                 //activeなsheet取得(第1sheet)
   var all_data = ss.getDataRange().getValues();    //sheet内の全データ
-  var sheet_name = sheet.getName();                //sheetの名前
 
   //  指定範囲のデータ取得getDataRange().getValues()
   reports = [];   //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
@@ -20,17 +21,32 @@ function get_reports() {
   }
   //reportsは配列なので1つずつ改行でつなげて一つの文章に変換。
   reports = reports.join('\n');
-  // Logger.log(reports);
+  Logger.log(reports);
   return reports;
+}
 
-  //  var lastrow = sheet.getLastRow();
-  //  for (var i = 4; i < lastrow; i++) {
-  //    var values = ss.getDataRange(i, 2, 1, 4).getValues(); //データのほしい範囲を指定している。
-  //    var text = "" // 空のtext変数を用意して以下の値を追加していく。 textの初期化という。
-  //    text += values[0][0] + '\n' + '  ' // 日付
-  //    text += values[0][1] + '\n' + '  ' // 名前
-  //    text += values[0][2] + '\n' + '分' // 休憩時間
-  //    Logger.log(text);
+function get_reports2() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();  //spreadsheetfile取得
+  var sheet = ss.getActiveSheet();   //activeなsheet取得(第1sheet)
+  //  指定範囲のデータ取得sheet.getDataRange().getValues()
+  reports2 = [];   //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
+  var lastrow = sheet.getLastRow();   //最終行番号取得
+  for(var i =4; i < lastrow-3; i++){
+    var range = sheet.getRange(i, 1, lastrow-3, 4);//データのほしい範囲を指定している。
+    range = range.sort({ column: 2, ascending: true });    //▶日付カラムで昇順でソート
+    var values = range.getValues();
+//    Logger.log(values);
+    var a = values[0][1] // 日付
+    var b = values[0][2] // 名前
+    var c = values[0][3] // 休憩時間
+    var report = a + '  ' + b + '  ' + c + '分' + '\n';
+//    Logger.log(report);
+    reports2.push(report);
+  }
+  reports2 = reports2.join('\n');
+  reports2 = sheet_name + '\n\n' + reports2;
+  //Logger.log(reports2);
+  return reports2;
 }
 
 
@@ -47,7 +63,7 @@ var to = PropertiesService.getScriptProperties().getProperty('my_id');
 var spreadsheet_id = PropertiesService.getScriptProperties().getProperty('spreadsheet_id');
 
 /**
- * 指定のuser_idにpushをする  ▶ フリープランだとできない？
+ * 指定のuser_idにpushをする
  */
 function push(text) {
   var url = "https://api.line.me/v2/bot/message/push";
@@ -83,11 +99,13 @@ function reply(data) {
     'Authorization': 'Bearer ' + access_token,
   };
 
+  get_reports(); //reportsの戻り値取得▶postData.'text'にここで取得したreportsを入れる。
+
   var postData = {
     "replyToken": data.events[0].replyToken,
     "messages": [{
       'type': 'text',
-      'text': data.events[0].message.text + 'おさ'
+      'text': reports
     }]
   };
 
@@ -98,6 +116,7 @@ function reply(data) {
   };
 
   return UrlFetchApp.fetch(url, options);
+
 }
 
 /**
@@ -114,8 +133,8 @@ function doPost(e) {
  * botに通知する
  */
 function notice() {
-  get_reports();
-  push(reports);
+  get_reports2();  //reportsの戻り値取得
+  push(reports2);  //push関数の引数にreportsを代入している。
 }
 
 

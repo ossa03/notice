@@ -2,5 +2,11 @@
   "timeZone": "Asia/Tokyo",
   "dependencies": {
   },
-  "exceptionLogging": "STACKDRIVER"
+  "exceptionLogging": "STACKDRIVER",
+  "sheets": {
+    "macros": [{
+      "menuName": "ピボットテーブル作成（新規シート）",
+      "functionName": "myFunction"
+    }]
+  }
 }

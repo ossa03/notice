@@ -4,6 +4,9 @@
 ・ログ
 Logger.log();
 
+・シート名でシート取得
+getSheetByName('シート名');
+
 ・スプレッドシートにダイアログボックスを表示
 SpreadsheetApp.getUi().alert(text);
 
@@ -48,6 +51,32 @@ ClockTriggerBuilderオブジェクト.create()
         setTime.setMinutes(59);
         ScriptApp.newTrigger('myFunction').timeBased().at(setTime).create();
       }
+
+・日付フォーマットを変更
+Utilities.formatDateで日付フォーマットを変更する
+実はJavaScriptでは日付のフォーマットを変更するための直接的な命令がなく、 皆さん独自の関数使ったりして工夫されているのですが、 Google Apps ScriptではGoogleが便利なライブラリを用意してくれているので、 それを使うことができます。
+
+Utilitiesというライブラリを使いまして
+Utilities.formatDate(日付, タイムゾーン, フォーマット)
+とすることで、 日付フォーマットを変更することができます。
+タイムゾーンは日本の場合は「 JST」 を指定してあげればOK。 フォーマットは年を「 y」、 月を「 M」（※ 大文字なので注意！）、 日を「 d」 を使って表現します。
+‘ yyyy - MM - dd’ とすれば「 2015 - 12 - 03」‘ yyyy年M月d日’ とすれば「 2015 年12月3日」
+となります。
+今回は最も一般的な書き方と言えますが
+JavaScript
+var strBody = ～+
+  Utilities.formatDate(yDate, 'JST', 'yyyy/MM/dd') + ～ //ga:date
+  1
+  2
+var strBody = ～+
+  Utilities.formatDate(yDate, 'JST', 'yyyy/MM/dd') + ～ //ga:date
+  としました。
+繰り返しになりますが、 UtilitiesはGAS専用ですから、 JavaScript一般では使えませんよ
+
+
+
+
+
 
 
 

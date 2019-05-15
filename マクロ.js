@@ -1,0 +1,31 @@
+function myFunction() {
+  var spreadsheet = SpreadsheetApp.getActive();
+  var sheet = spreadsheet.getActiveSheet();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).activate();
+  var sourceData = spreadsheet.getRange('1:1135');
+  spreadsheet.insertSheet(spreadsheet.getActiveSheet().getIndex() + 1).activate();
+  spreadsheet.getActiveSheet().setHiddenGridlines(true);
+  var pivotTable = spreadsheet.getRange('A1').createPivotTable(sourceData);
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('ピボット テーブル'), true);
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('ピボット テーブル 6'), true);
+  pivotTable = spreadsheet.getRange('A1').createPivotTable(sourceData);
+  var pivotGroup = pivotTable.addRowGroup(2);
+  pivotTable = spreadsheet.getRange('A1').createPivotTable(sourceData);
+  pivotGroup = pivotTable.addRowGroup(2);
+  pivotGroup = pivotTable.addColumnGroup(3);
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('ピボット テーブル'), true);
+  spreadsheet.setActiveSheet(spreadsheet.getSheetByName('ピボット テーブル 6'), true);
+  pivotTable = spreadsheet.getRange('A1').createPivotTable(sourceData);
+  var pivotValue = pivotTable.addPivotValue(4, SpreadsheetApp.PivotTableSummarizeFunction.COUNTA);
+  pivotGroup = pivotTable.addRowGroup(2);
+  pivotGroup = pivotTable.addColumnGroup(3);
+  pivotTable = spreadsheet.getRange('A1').createPivotTable(sourceData);
+  pivotValue = pivotTable.addPivotValue(4, SpreadsheetApp.PivotTableSummarizeFunction.AVERAGE);
+  pivotGroup = pivotTable.addRowGroup(2);
+  pivotGroup = pivotTable.addColumnGroup(3);
+  sheet = spreadsheet.getActiveSheet();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).activate();
+  spreadsheet.getActiveRangeList().setNumberFormat('0')
+  .setNumberFormat('0.0');
+  spreadsheet.getRange('I16').activate();
+};
