@@ -36,7 +36,18 @@ payload： ペイロード（ POSTの際のボディなど）
 続いて、「 Webhook送信」 の下にある「 Webhook URL」 にWebhook送信に利用するURLを指定します。 このURLは、 使用するサーバによって当然ながら異なります。 例えば、 Google Apps Scriptをサーバとして使用する場合には、 Google Apps Scriptをウェブアプリケーションとして公開した時に得られるURLを入力します。 Google Apps ScriptのURLの取得方法はこちらに載せています。
 同じく「 編集」 をクリックすると、 以下のようにWebhook URLの入力欄が出てくるのでそこにボットの実体がおいてある自身のサーバのURLを貼り付けて「 更新」 をクリックします。 以下ではGoogle Apps ScriptのURLを入力しています。
 
-
+・Trigger
+ClockTriggerBuilderオブジェクト.at(指定日時)
+一定時間後の時刻を設定する場合はafterメソッドを使用します。 単位はミリ秒となっているので、 10 分後を指定する場合はafter(10× 60× 1000) となります。
+最後にトリガーの生成にはcreateメソッドを使用します。
+ClockTriggerBuilderオブジェクト.create()
+      例）
+      function setTrigger() {
+        var setTime = new Date();
+        setTime.setHours(23);
+        setTime.setMinutes(59);
+        ScriptApp.newTrigger('myFunction').timeBased().at(setTime).create();
+      }
 
 
 

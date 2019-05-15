@@ -111,9 +111,23 @@ function doPost(e) {
 }
 
 /**
- * pushをしてみる
+ * botに通知する
  */
 function notice() {
-  notice();
+  get_reports();
   push(reports);
+}
+
+
+
+// --------------  Trigger  ---------------------------------------------------
+
+/**
+ * scriptエディタからこの関数を実行して好きな時間にTriggerをかける。
+ */
+function setTrigger() {
+  var setTime = new Date();
+  setTime.setHours(21);
+  setTime.setMinutes(00);
+  ScriptApp.newTrigger('notice').timeBased().at(setTime).create();
 }
