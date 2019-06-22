@@ -1,7 +1,7 @@
 // ------- sheetから結果取得 --------------------------------------------------
 var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();  //spreadsheetfile取得
-// var sheet = spreadsheet.getActiveSheet();                 //activeなsheet取得(第1sheet)
-var sheet = spreadsheet.getSheetByName('フォームの回答'); //sheet名でsheet取得(第1sheet)
+var sheet = spreadsheet.getActiveSheet();                 //activeなsheet取得(第1sheet)
+//var sheet = spreadsheet.getSheetByName('フォームの回答'); //sheet名でsheet取得(第1sheet)
 var sheet_name = sheet.getName();                //sheetの名前
 
 
@@ -9,14 +9,14 @@ var sheet_name = sheet.getName();                //sheetの名前
  * spreadsheet('フォームの回答')から(日付、名前、休憩時間)を取得。
  */
 function get_reports() {
-  reports = [];   //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
+  var reports = [];   //出力データを格納するための配列を用意。 上記でグローバル変数として定義している。
   var lastrow = sheet.getLastRow();   //最終行番号取得
   // Logger.log(lastrow);
-  for(var i =4; i < lastrow-3; i++){
-    var range = sheet.getRange(i, 1, lastrow, 4);//データのほしい範囲を指定している。
+  for(var i = 2; i < lastrow + 1; i++){
+    var range = sheet.getRange(i, 1, 1, 4);      
+//    var range = sheet.getDataRange();  //データのほしい範囲を指定している。
     range = range.sort({ column: 2, ascending: true });    //▶日付カラムで昇順でソート
     var values = range.getValues();
-//    Logger.log(values);
     var a = values[0][1]; // 日付
     var b = values[0][2]; // 名前
     var c = values[0][3]; // 休憩時間
@@ -26,7 +26,7 @@ function get_reports() {
   }
   reports = reports.join('\n');
   reports = sheet_name + '\n\n' + reports;
-// Logger.log(reports);
+ Logger.log(reports);
   return reports;
 }
 
@@ -95,18 +95,18 @@ function reply(data) {
     'Authorization': 'Bearer ' + access_token,
   };
 
-  var reports = get_reports(); //reportsの戻り値取得▶postData.'text'にここで取得したreportsを入れる。
+  var body = get_reports(); //reportsの戻り値取得▶postData.'text'にここで取得したreportsを入れる。
 
   var postData = {
     "replyToken": data.events[0].replyToken,
     "messages": [{
       'type': 'text',
-      'text': reports
+      'text': body
     }]
   };
 
   var options = {
-    "method": "post",
+    "method": 'POST',
     "headers": headers,
     "payload": JSON.stringify(postData)
   };
@@ -129,7 +129,9 @@ function doGet() {
 function doPost(e) {
   var json = JSON.parse(e.postData.contents);
 //  log
-  SpreadsheetApp.openById(get_spreadsheet_id()).getSheetByName('log').getRange(1, 1).setValue(json.events);
+  var sheet_log = SpreadsheetApp.openById(get_spreadsheet_id()).getSheetByName('log');
+  var lastrow = sheet_log.getLastRow();
+  var data = sheet_log.getRange(lastrow+1, 1).setValue(json.events);
 
   reply(json);
 }
@@ -153,4 +155,20 @@ function setTrigger() {
   setTime.setHours(21);
   setTime.setMinutes(00);
   ScriptApp.newTrigger('notice').timeBased().at(setTime).create();
+}
+
+
+/**
+*色々ためすテスト用
+*/
+function test() {
+  var lastrow = sheet.getLastRow();
+  var range = sheet.getRange(2, 1, lastrow, 4);
+  var values1 = range.getValues();
+  Logger.log(values1);
+ var date = new Date();
+  today = date.today();
+  Logger.log(today);
+ var this_month = date.month();
+  Logger.log(this_month);
 }
